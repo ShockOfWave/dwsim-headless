@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>DWSIM.Thermodynamics.ThermoC</RootNamespace>
+    <AssemblyName>DWSIM.Thermodynamics.ThermoC</AssemblyName>
+    <OutputType>Library</OutputType>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <DefineConstants>HEADLESS</DefineConstants>
+  </PropertyGroup>
+
+  <!-- Exclude legacy Properties/AssemblyInfo.cs -->
+  <ItemGroup>
+    <Compile Remove="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+
+  <!-- NuGet packages -->
+  <ItemGroup>
+    <PackageReference Include="Eto.Forms" Version="2.8.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <!-- Local DLL references -->
+  <ItemGroup>
+    <Reference Include="CapeOpen">
+      <HintPath>..\DWSIM\References\CapeOpen.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="ThermoCS">
+      <HintPath>..\PlatformFiles\Linux\ThermoCS\ThermoCS.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!-- Project references -->
+  <ItemGroup>
+    <ProjectReference Include="..\DWSIM.ExtensionMethods.Eto\DWSIM.ExtensionMethods.Eto.csproj" />
+    <ProjectReference Include="..\DWSIM.GlobalSettings\DWSIM.GlobalSettings.vbproj" />
+    <ProjectReference Include="..\DWSIM.Interfaces\DWSIM.Interfaces.vbproj" />
+    <ProjectReference Include="..\DWSIM.Serializers.XML\DWSIM.XMLSerializer.vbproj" />
+    <ProjectReference Include="..\DWSIM.Thermodynamics\DWSIM.Thermodynamics.vbproj" />
+  </ItemGroup>
+
+</Project>

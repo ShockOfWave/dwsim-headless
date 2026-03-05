@@ -1,0 +1,58 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>DWSIM.FlowsheetSolver</RootNamespace>
+    <AssemblyName>DWSIM.FlowsheetSolver</AssemblyName>
+    <OutputType>Library</OutputType>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <OptionExplicit>On</OptionExplicit>
+    <OptionCompare>Binary</OptionCompare>
+    <OptionStrict>Off</OptionStrict>
+    <OptionInfer>On</OptionInfer>
+    <NoWarn>41999,42016,42020,42021,42022</NoWarn>
+    <!-- Define HEADLESS to conditionally exclude GPU/UI code -->
+    <DefineConstants>HEADLESS</DefineConstants>
+    <!-- MyType must be Empty for non-WinForms VB projects on .NET 8 -->
+    <MyType>Empty</MyType>
+  </PropertyGroup>
+
+  <!-- VB project-level Imports -->
+  <ItemGroup>
+    <Import Include="DWSIM.MathOps" />
+    <Import Include="Microsoft.VisualBasic" />
+    <Import Include="System" />
+    <Import Include="System.Collections" />
+    <Import Include="System.Collections.Generic" />
+    <Import Include="System.Diagnostics" />
+    <Import Include="System.Linq" />
+    <Import Include="System.Xml.Linq" />
+    <Import Include="System.Threading.Tasks" />
+  </ItemGroup>
+
+  <!-- Exclude My Project auto-generated files (not needed in SDK-style) -->
+  <ItemGroup>
+    <Compile Remove="My Project\Application.Designer.vb" />
+    <Compile Remove="My Project\Resources.Designer.vb" />
+    <Compile Remove="My Project\Settings.Designer.vb" />
+  </ItemGroup>
+
+  <!--
+    Cudafy.NET reference REMOVED for headless builds.
+    Cudafy was only referenced in the old project file but not imported/used
+    in any source files. It is a Windows-only GPU computing library that
+    is not compatible with .NET 8.0 / cross-platform builds.
+  -->
+
+  <!-- Project references -->
+  <ItemGroup>
+    <ProjectReference Include="..\DWSIM.Inspector\DWSIM.Inspector.vbproj" />
+    <ProjectReference Include="..\DWSIM.Serializers.XML\DWSIM.XMLSerializer.vbproj" />
+    <ProjectReference Include="..\DWSIM.ExtensionMethods\DWSIM.ExtensionMethods.vbproj" />
+    <ProjectReference Include="..\DWSIM.GlobalSettings\DWSIM.GlobalSettings.vbproj" />
+    <ProjectReference Include="..\DWSIM.Interfaces\DWSIM.Interfaces.vbproj" />
+    <ProjectReference Include="..\DWSIM.Math\DWSIM.MathOps.vbproj" />
+    <ProjectReference Include="..\DWSIM.SharedClasses\DWSIM.SharedClasses.vbproj" />
+  </ItemGroup>
+
+</Project>

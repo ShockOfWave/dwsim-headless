@@ -1,0 +1,12 @@
+output/
+docs/
+.git/
+.gitmodules
+dwsim/.git
+*.md
+__pycache__/
+*.pyc
+.claude/
+.venv/
+.env
+LICENSE

@@ -1,0 +1,92 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>DWSIM.Drawing.SkiaSharp</RootNamespace>
+    <AssemblyName>DWSIM.Drawing.SkiaSharp</AssemblyName>
+    <OutputType>Library</OutputType>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <OptionExplicit>On</OptionExplicit>
+    <OptionCompare>Binary</OptionCompare>
+    <OptionStrict>Off</OptionStrict>
+    <OptionInfer>On</OptionInfer>
+    <NoWarn>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</NoWarn>
+    <DefineConstants>HEADLESS</DefineConstants>
+    <MyType>Empty</MyType>
+  </PropertyGroup>
+
+  <!-- Exclude WinForms-dependent files -->
+  <ItemGroup>
+    <!-- HTMLTextGraphic uses HtmlRenderer.WinForms and System.Drawing.Bitmap interop -->
+    <Compile Remove="GraphicObjects\Text\HTMLTextGraphic.vb" />
+    <!-- My Project auto-generated designer files not needed in SDK-style -->
+    <Compile Remove="My Project\Application.Designer.vb" />
+    <Compile Remove="My Project\Resources.Designer.vb" />
+    <Compile Remove="My Project\Settings.Designer.vb" />
+  </ItemGroup>
+
+  <!-- VB Imports (replaces <Import> items from old project) -->
+  <ItemGroup>
+    <Import Include="Microsoft.VisualBasic" />
+    <Import Include="SkiaSharp" />
+    <Import Include="System" />
+    <Import Include="System.Collections" />
+    <Import Include="System.Collections.Generic" />
+    <Import Include="System.Linq" />
+    <Import Include="System.Xml.Linq" />
+  </ItemGroup>
+
+  <!-- NuGet packages -->
+  <ItemGroup>
+    <PackageReference Include="SkiaSharp" Version="2.88.9" />
+    <PackageReference Include="SkiaSharp.Extended" Version="2.0.0" />
+    <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
+    <!-- Required for System.Drawing.Bitmap used by GetIconAsBitmap() interface impl -->
+    <PackageReference Include="System.Drawing.Common" Version="8.0.10" />
+  </ItemGroup>
+
+  <!-- Local assembly references (MSAGL - AutomaticGraphLayout) -->
+  <ItemGroup>
+    <Reference Include="AutomaticGraphLayout">
+      <HintPath>..\DWSIM\References\MSAGL\AutomaticGraphLayout.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="AutomaticGraphLayout.Drawing">
+      <HintPath>..\DWSIM\References\MSAGL\AutomaticGraphLayout.Drawing.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!-- Project references -->
+  <ItemGroup>
+    <ProjectReference Include="..\DWSIM.DrawingTools.Point\DWSIM.DrawingTools.Point.vbproj" />
+    <ProjectReference Include="..\DWSIM.ExtensionMethods\DWSIM.ExtensionMethods.vbproj" />
+    <ProjectReference Include="..\DWSIM.Math\DWSIM.MathOps.vbproj" />
+    <ProjectReference Include="..\DWSIM.Serializers.XML\DWSIM.XMLSerializer.vbproj" />
+    <ProjectReference Include="..\DWSIM.GlobalSettings\DWSIM.GlobalSettings.vbproj" />
+    <ProjectReference Include="..\DWSIM.Interfaces\DWSIM.Interfaces.vbproj" />
+    <ProjectReference Include="..\DWSIM.SharedClasses\DWSIM.SharedClasses.vbproj" />
+  </ItemGroup>
+
+  <!-- Embedded resources: Fonts -->
+  <ItemGroup>
+    <EmbeddedResource Include="Fonts\**\*.ttf" />
+    <EmbeddedResource Include="Fonts\Fonts.txt" />
+  </ItemGroup>
+
+  <!-- Embedded resources: Bitmaps -->
+  <ItemGroup>
+    <EmbeddedResource Include="Bitmaps\*.png" />
+  </ItemGroup>
+
+  <!-- Embedded resources: Icons -->
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\*.png" />
+  </ItemGroup>
+
+  <!-- Content -->
+  <ItemGroup>
+    <Content Include="Fonts\OFL.txt" />
+  </ItemGroup>
+
+</Project>

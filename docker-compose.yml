@@ -1,0 +1,19 @@
+services:
+  # Build stage only (for development/debugging)
+  dwsim-build:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: build
+    volumes:
+      - ./output:/output
+    command: ["/scripts/build.sh"]
+
+  # Runtime with Python integration
+  dwsim-runtime:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    volumes:
+      - ./output:/output

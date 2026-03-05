@@ -1,0 +1,56 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace />
+    <AssemblyName>DWSIM.Thermodynamics.AdvancedEOS.GERG2008</AssemblyName>
+    <OutputType>Library</OutputType>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <EnableDefaultItems>false</EnableDefaultItems>
+    <OptionExplicit>On</OptionExplicit>
+    <OptionCompare>Binary</OptionCompare>
+    <OptionStrict>Off</OptionStrict>
+    <OptionInfer>On</OptionInfer>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+    <DefineConstants>HEADLESS</DefineConstants>
+    <MyType>Empty</MyType>
+  </PropertyGroup>
+
+  <!-- VB project-level Imports -->
+  <ItemGroup>
+    <Import Include="Microsoft.VisualBasic" />
+    <Import Include="System" />
+    <Import Include="System.Collections" />
+    <Import Include="System.Collections.Generic" />
+    <Import Include="System.Data" />
+    <Import Include="System.Diagnostics" />
+    <Import Include="System.Linq" />
+    <Import Include="System.Xml.Linq" />
+    <Import Include="System.Threading.Tasks" />
+  </ItemGroup>
+
+  <!-- Source files (no WinForms forms to exclude) -->
+  <ItemGroup>
+    <Compile Include="**\*.vb" />
+    <!-- Exclude My Project auto-generated files -->
+    <Compile Remove="My Project\Application.Designer.vb" />
+    <Compile Remove="My Project\Resources.Designer.vb" />
+  </ItemGroup>
+
+  <!-- Local DLL references -->
+  <ItemGroup>
+    <Reference Include="CapeOpen">
+      <HintPath>..\DWSIM\References\CapeOpen.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!-- Project references -->
+  <ItemGroup>
+    <ProjectReference Include="..\DWSIM.ExtensionMethods\DWSIM.ExtensionMethods.vbproj" />
+    <ProjectReference Include="..\DWSIM.GlobalSettings\DWSIM.GlobalSettings.vbproj" />
+    <ProjectReference Include="..\DWSIM.Interfaces\DWSIM.Interfaces.vbproj" />
+    <ProjectReference Include="..\DWSIM.Thermodynamics\DWSIM.Thermodynamics.vbproj" />
+  </ItemGroup>
+
+</Project>

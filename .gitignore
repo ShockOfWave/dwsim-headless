@@ -1,0 +1,36 @@
+# Build artifacts
+output/*.dll
+output/*.pdb
+output/*.json
+output/*.xml
+output/*.config
+output/de/
+output/en/
+output/es/
+output/runtimes/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# IDE
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+
+# Claude Code
+.claude/

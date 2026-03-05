@@ -1,0 +1,4 @@
+[submodule "dwsim"]
+	path = dwsim
+	url = https://github.com/DanWBR/dwsim.git
+	branch = windows

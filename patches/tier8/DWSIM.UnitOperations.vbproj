@@ -1,0 +1,167 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>DWSIM.UnitOperations</RootNamespace>
+    <AssemblyName>DWSIM.UnitOperations</AssemblyName>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <OptionExplicit>On</OptionExplicit>
+    <OptionStrict>Off</OptionStrict>
+    <OptionCompare>Binary</OptionCompare>
+    <OptionInfer>On</OptionInfer>
+    <DefineConstants>HEADLESS</DefineConstants>
+    <NoWarn>42016,41999,42015,42017,42018,42019,42032,42036,42020,42021,42022,SYSLIB0011,SYSLIB0050</NoWarn>
+    <MyType>Empty</MyType>
+    <RemoveIntegerChecks>true</RemoveIntegerChecks>
+    <RunAnalyzers>false</RunAnalyzers>
+    <!-- SDK-style projects auto-include *.vb — we must exclude UI files -->
+    <EnableDefaultCompile>true</EnableDefaultCompile>
+    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+  </PropertyGroup>
+
+  <!-- ================================================================== -->
+  <!-- VB global Imports (project-level) — NO System.Windows.Forms        -->
+  <!-- ================================================================== -->
+  <ItemGroup>
+    <Import Include="DWSIM.ExtensionMethods" />
+    <Import Include="DWSIM.GlobalSettings" />
+    <Import Include="DWSIM.Inspector" />
+    <Import Include="DWSIM.Interfaces" />
+    <Import Include="Microsoft.VisualBasic" />
+    <Import Include="System" />
+    <Import Include="System.Collections" />
+    <Import Include="System.Collections.Generic" />
+    <Import Include="System.Data" />
+    <Import Include="System.Diagnostics" />
+    <Import Include="System.Linq" />
+    <Import Include="System.Xml.Linq" />
+    <Import Include="System.Threading.Tasks" />
+  </ItemGroup>
+
+  <!-- ================================================================== -->
+  <!-- EXCLUDE files: EditingForms/**, Extenders/ScintillaExtender.vb,    -->
+  <!-- SupportClasses/ComboBoxColumnTemplates.vb, My Project/**,          -->
+  <!-- Extenders/ExtensionMethods.vb (WinForms clipboard helpers)         -->
+  <!-- ================================================================== -->
+  <ItemGroup>
+    <!-- Exclude all EditingForms (WinForms UI editors) -->
+    <Compile Remove="EditingForms\**" />
+    <EmbeddedResource Remove="EditingForms\**" />
+    <None Remove="EditingForms\**" />
+    <!-- Exclude ScintillaExtender (requires ScintillaNET WinForms control) -->
+    <Compile Remove="Extenders\ScintillaExtender.vb" />
+    <!-- Exclude ComboBoxColumnTemplates (uses DataGridViewComboBoxCell) -->
+    <Compile Remove="SupportClasses\ComboBoxColumnTemplates.vb" />
+    <!-- Exclude My Project auto-generated files (SDK-style handles this) -->
+    <Compile Remove="My Project\**" />
+    <None Remove="My Project\**" />
+    <!-- Extenders/ExtensionMethods.vb is included (no WinForms code, has ToArrayString overloads) -->
+    <!-- Exclude PEMFC files that were <None> in original project (not compiled) -->
+    <Compile Remove="UnitOperations\CleanEnergies\PEMFC_ChamberlineKim.vb" />
+    <Compile Remove="UnitOperations\CleanEnergies\PEMFC_LarminieDicks.vb" />
+  </ItemGroup>
+
+  <!-- ================================================================== -->
+  <!-- Embedded resources: Language .resx files + Assets                   -->
+  <!-- ================================================================== -->
+  <ItemGroup>
+    <EmbeddedResource Include="Languages\Strings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings.Designer.vb</LastGenOutput>
+      <CustomToolNamespace>My.Resources</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Languages\Strings.de.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings.de.Designer.vb</LastGenOutput>
+      <CustomToolNamespace>My.Resources</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Languages\Strings.en.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings.en.Designer.vb</LastGenOutput>
+      <CustomToolNamespace>My.Resources</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Languages\Strings.es.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings.es.Designer.vb</LastGenOutput>
+      <CustomToolNamespace>My.Resources</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Assets\fittings.dat" />
+    <EmbeddedResource Include="Assets\pipes.dat" />
+  </ItemGroup>
+
+  <!-- ================================================================== -->
+  <!-- NuGet packages                                                     -->
+  <!-- ================================================================== -->
+  <ItemGroup>
+    <!-- Core packages (netstandard2.0 compatible) -->
+    <PackageReference Include="AutoDiff" Version="1.2.2" />
+    <PackageReference Include="DynamicLanguageRuntime" Version="1.3.4" />
+    <PackageReference Include="Eto.Forms" Version="2.8.3" />
+    <PackageReference Include="GemBox.Spreadsheet" Version="39.3.30.1215" />
+    <PackageReference Include="IronPython" Version="3.4.1" />
+    <PackageReference Include="Mages" Version="2.0.2" />
+    <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="OxyPlot.Core" Version="2.0.0" />
+    <PackageReference Include="SharpZipLib" Version="1.4.2" />
+    <PackageReference Include="SkiaSharp" Version="2.88.9" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+    <PackageReference Include="XMLUnit.Core" Version="2.9.1" />
+  </ItemGroup>
+
+  <!-- ================================================================== -->
+  <!-- Local DLL references (from DWSIM/References/)                      -->
+  <!-- ================================================================== -->
+  <ItemGroup>
+    <Reference Include="CapeOpen">
+      <HintPath>..\DWSIM\References\CapeOpen.dll</HintPath>
+    </Reference>
+    <Reference Include="Ciloci.Flee">
+      <HintPath>..\DWSIM\References\Ciloci.Flee.dll</HintPath>
+    </Reference>
+    <Reference Include="Cureos.Numerics">
+      <HintPath>..\DWSIM\References\Cureos.Numerics.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.CAPEOPEN110">
+      <HintPath>..\DWSIM\References\Interop.CAPEOPEN110.dll</HintPath>
+    </Reference>
+    <Reference Include="Jolt">
+      <HintPath>..\DWSIM\References\Jolt.dll</HintPath>
+    </Reference>
+    <Reference Include="Jolt.Testing.GeneratedTypes">
+      <HintPath>..\DWSIM\References\Jolt.Testing.GeneratedTypes.dll</HintPath>
+    </Reference>
+    <!-- Mapack.dll replaced with ProjectReference to DWSIM.MathOps.Mapack (same types, compiled from source) -->
+    <Reference Include="Python.Runtime">
+      <HintPath>..\DWSIM\References\Python.Runtime.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <!-- ================================================================== -->
+  <!-- Project references (KEEP — core dependencies only)                  -->
+  <!-- REMOVED: DockPanel, TabStrip, ZedGraph (WinForms controls)         -->
+  <!-- ================================================================== -->
+  <ItemGroup>
+    <ProjectReference Include="..\DWSIM.Drawing.SkiaSharp\DWSIM.DrawingTools.SkiaSharp.vbproj" />
+    <ProjectReference Include="..\DWSIM.DrawingTools.SkiaSharp.Extended\DWSIM.DrawingTools.SkiaSharp.Extended.csproj" />
+    <ProjectReference Include="..\DWSIM.DrawingTools.Point\DWSIM.DrawingTools.Point.vbproj" />
+    <ProjectReference Include="..\DWSIM.ExtensionMethods\DWSIM.ExtensionMethods.vbproj" />
+    <ProjectReference Include="..\DWSIM.ExtensionMethods.Eto\DWSIM.ExtensionMethods.Eto.csproj" />
+    <ProjectReference Include="..\DWSIM.FlowsheetSolver\DWSIM.FlowsheetSolver.vbproj" />
+    <ProjectReference Include="..\DWSIM.GlobalSettings\DWSIM.GlobalSettings.vbproj" />
+    <ProjectReference Include="..\DWSIM.Inspector\DWSIM.Inspector.vbproj" />
+    <ProjectReference Include="..\DWSIM.Interfaces\DWSIM.Interfaces.vbproj" />
+    <ProjectReference Include="..\DWSIM.Math\DWSIM.MathOps.vbproj" />
+    <ProjectReference Include="..\DWSIM.MathOps.Mapack\DWSIM.MathOps.Mapack.csproj" />
+    <ProjectReference Include="..\DWSIM.Math.DotNumerics\DWSIM.MathOps.DotNumerics.csproj" />
+    <ProjectReference Include="..\DWSIM.Math.RandomOps\DWSIM.MathOps.RandomOps.csproj" />
+    <ProjectReference Include="..\DWSIM.Math.SwarmOps\DWSIM.MathOps.SwarmOps.csproj" />
+    <ProjectReference Include="..\DWSIM.Serializers.XML\DWSIM.XMLSerializer.vbproj" />
+    <ProjectReference Include="..\DWSIM.SharedClasses\DWSIM.SharedClasses.vbproj" />
+    <ProjectReference Include="..\DWSIM.SharedClassesCSharp\DWSIM.SharedClassesCSharp.csproj" />
+    <ProjectReference Include="..\DWSIM.SkiaSharp.Views.Desktop\DWSIM.SkiaSharp.Views.Desktop.csproj" />
+    <ProjectReference Include="..\DWSIM.Thermodynamics\DWSIM.Thermodynamics.vbproj" />
+    <ProjectReference Include="..\DWSIM.Thermodynamics.ReaktoroPropertyPackage\DWSIM.Thermodynamics.ReaktoroPropertyPackage.vbproj" />
+  </ItemGroup>
+
+</Project>

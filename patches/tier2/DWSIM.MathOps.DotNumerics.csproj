@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>DotNumerics</RootNamespace>
+    <AssemblyName>DWSIM.MathOps.DotNumerics</AssemblyName>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <!-- Match original project warning level -->
+    <WarningLevel>0</WarningLevel>
+  </PropertyGroup>
+
+  <!--
+    System.Drawing is used in LinearAlgebra/LinearEquations.cs.
+    On .NET 8+ the System.Drawing types live in System.Drawing.Common (NuGet).
+    EnableUnixSupport is needed for non-Windows platforms.
+  -->
+  <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" Version="8.0.10" />
+  </ItemGroup>
+
+</Project>

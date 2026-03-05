@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>DWSIM.SharedClassesCSharp</RootNamespace>
+    <AssemblyName>DWSIM.SharedClassesCSharp</AssemblyName>
+    <OutputType>Library</OutputType>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <EnableDefaultItems>false</EnableDefaultItems>
+    <!-- Define HEADLESS to conditionally exclude WinForms code -->
+    <DefineConstants>HEADLESS</DefineConstants>
+  </PropertyGroup>
+
+  <!-- Include all C# source files, then exclude WinForms components -->
+  <ItemGroup>
+    <Compile Include="**\*.cs" />
+    <!-- Exclude ConnectionsEditor (pure WinForms UserControl) -->
+    <Compile Remove="ConnectionsEditor\**" />
+    <!-- Exclude Windows-specific FilePicker (uses WinForms dialogs) -->
+    <Compile Remove="FilePicker\Windows\WindowsFilePicker.cs" />
+    <!-- Exclude WindowsFile.cs (depends on DWSIM.Simulate365) -->
+    <Compile Remove="FilePicker\Windows\WindowsFile.cs" />
+    <!-- Exclude auto-generated Properties files not needed in SDK-style -->
+    <Compile Remove="Properties\AssemblyInfo.cs" />
+    <!-- Exclude Resources.Designer.cs (references System.Drawing.Bitmap for ConnectionsEditor icons) -->
+    <Compile Remove="Properties\Resources.Designer.cs" />
+  </ItemGroup>
+
+  <!-- NuGet PackageReferences -->
+  <ItemGroup>
+    <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <!-- Project references (NO Simulate365 - cloud integration not needed for headless) -->
+  <ItemGroup>
+    <ProjectReference Include="..\DWSIM.GlobalSettings\DWSIM.GlobalSettings.vbproj" />
+    <ProjectReference Include="..\DWSIM.Interfaces\DWSIM.Interfaces.vbproj" />
+    <ProjectReference Include="..\DWSIM.Serializers.XML\DWSIM.XMLSerializer.vbproj" />
+  </ItemGroup>
+
+</Project>

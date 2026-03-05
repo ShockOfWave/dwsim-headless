@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>DWSIM.MathOps</RootNamespace>
+    <AssemblyName>DWSIM.MathOps</AssemblyName>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <OptionExplicit>On</OptionExplicit>
+    <OptionCompare>Binary</OptionCompare>
+    <OptionStrict>Off</OptionStrict>
+    <OptionInfer>On</OptionInfer>
+    <!-- Suppress common VB warnings that were suppressed in the original project -->
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+  </PropertyGroup>
+
+  <!-- NuGet package references (replacing packages.config) -->
+  <ItemGroup>
+    <PackageReference Include="AutoDiff" Version="1.2.2" />
+    <PackageReference Include="LibOptimization" Version="1.14.0" />
+    <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
+  </ItemGroup>
+
+  <!-- Local assembly references (no NuGet packages available for .NET 8) -->
+  <ItemGroup>
+    <Reference Include="Cureos.Numerics">
+      <HintPath>..\DWSIM\References\Cureos.Numerics.dll</HintPath>
+    </Reference>
+    <Reference Include="Mapack">
+      <HintPath>..\DWSIM\References\Mapack.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <!-- Project references -->
+  <ItemGroup>
+    <ProjectReference Include="..\DWSIM.DrawingTools.Point\DWSIM.DrawingTools.Point.vbproj" />
+  </ItemGroup>
+
+  <!-- Exclude the old My Project auto-generated files that are not needed in SDK-style -->
+  <ItemGroup>
+    <Compile Remove="My Project\Application.Designer.vb" />
+    <Compile Remove="My Project\Resources.Designer.vb" />
+    <Compile Remove="My Project\Settings.Designer.vb" />
+  </ItemGroup>
+
+</Project>

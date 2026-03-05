@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>SwarmOps</RootNamespace>
+    <AssemblyName>DWSIM.MathOps.SwarmOps</AssemblyName>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  </PropertyGroup>
+
+  <!-- Project references -->
+  <ItemGroup>
+    <ProjectReference Include="..\DWSIM.Math.RandomOps\DWSIM.MathOps.RandomOps.csproj" />
+  </ItemGroup>
+
+</Project>
