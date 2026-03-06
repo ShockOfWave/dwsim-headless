@@ -15,21 +15,15 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /src
 
-# Copy DWSIM sources from submodule (pinned to specific commit)
+# Copy DWSIM sources from fork (headless branch, already modified)
 COPY dwsim/ /src/
-
-# Copy patches (including tier subdirectories) and scripts
-COPY patches/ /patches/
-
-# Make all shell scripts executable
-RUN find /patches -name '*.sh' -exec chmod +x {} +
 
 COPY scripts/ /scripts/
 RUN chmod +x /scripts/*.sh
 
 COPY smoke-test/ /smoke-test/
 
-# Build everything (patches + compile + smoke test)
+# Build (restore + compile + smoke test)
 RUN /scripts/build.sh
 
 # ============================================================

@@ -1,94 +1,101 @@
-# Ограничения и известные проблемы
+# Limitations and Known Issues
 
-## Функциональные ограничения
+## Functional Limitations
 
-### Отключённый функционал (обёрнут в #If Not HEADLESS)
+### Disabled Functionality (Wrapped in #If Not HEADLESS)
 
-| Функционал | Причина | Влияние |
-|------------|---------|---------|
-| **Формы редактирования** (EditingForms) | Зависят от System.Windows.Forms | Нельзя визуально редактировать свойства аппаратов. Все свойства доступны программно через `SetPropertyValue()` |
-| **Python.NET скрипты** (PythonScriptUO) | Зависит от Python.Runtime.dll для Windows | `PythonScriptUO` нельзя использовать для выполнения пользовательских Python-скриптов внутри DWSIM. Обходной путь: вычисляйте в Python и передавайте результаты через API |
-| **CapeOpen UI** (CustomUO_CO.Edit) | Зависит от WinForms форм | CapeOpen unit operations работают, но метод `Edit()` недоступен. Конфигурация — через программный API |
-| **ChangeCalculationOrder** | Использует FormCustomCalcOrder | В headless просто возвращает текущий порядок без изменений. Порядок расчёта определяется автоматически решателем |
-| **NetOffice Excel COM** (Spreadsheet.vb) | COM Automation для Excel на Windows | Чтение/запись Excel через COM недоступно. Данные можно передавать через Python |
-| **DynamicsPropertyEditor** | WinForms редактор | Динамические свойства доступны программно |
+| Functionality | Reason | Impact |
+|---------------|--------|--------|
+| **Editing Forms** (EditingForms) | Depend on System.Windows.Forms | Cannot visually edit unit operation properties. All properties are accessible programmatically via `SetPropertyValue()` |
+| **Python.NET Scripts** (PythonScriptUO) | Depends on Python.Runtime.dll for Windows | `PythonScriptUO` cannot be used to execute custom Python scripts inside DWSIM. Workaround: perform calculations in Python and pass results via the API |
+| **CapeOpen UI** (CustomUO_CO.Edit) | Depends on WinForms forms | CapeOpen unit operations work, but the `Edit()` method is unavailable. Configuration is done through the programmatic API |
+| **ChangeCalculationOrder** | Uses FormCustomCalcOrder | In headless mode, simply returns the current order unchanged. Calculation order is determined automatically by the solver |
+| **NetOffice Excel COM** (Spreadsheet.vb) | COM Automation for Excel on Windows | Reading/writing Excel via COM is unavailable. Data can be passed through Python |
+| **DynamicsPropertyEditor** | WinForms editor | Dynamic properties are accessible programmatically |
 
-### IronPython скрипты
+### IronPython Scripts
 
-IronPython (`RunScript_IronPython`) **работает**. Только Python.NET (`RunScript_PythonNET`) отключён. Если ваши скрипты написаны для IronPython, они будут работать.
+IronPython (`RunScript_IronPython`) **works**. Only Python.NET (`RunScript_PythonNET`) is disabled. If your scripts are written for IronPython, they will work.
 
-### SkiaSharp рисование
+### SkiaSharp Drawing
 
-Рисование технологических схем через SkiaSharp **работает** — `CreateFlowsheet()` создаёт полноценный `Flowsheet2` с поддержкой рисования. Но для корректной работы SkiaSharp на Linux необходимы:
-- `libfontconfig1` и `fonts-dejavu-core` (установлены в Docker-образе)
-- Нативная библиотека `libSkiaSharp.so` правильной архитектуры (копируется автоматически)
+Flowsheet drawing via SkiaSharp **works** -- `CreateFlowsheet()` creates a fully functional `Flowsheet2` with drawing support. However, for SkiaSharp to work correctly on Linux, the following are required:
+- `libfontconfig1` and `fonts-dejavu-core` (installed in the Docker image)
+- The native library `libSkiaSharp.so` for the correct architecture (copied automatically)
 
-## Совместимость
+## Compatibility
 
-### NuGet-зависимости
+### NuGet Dependencies
 
-Некоторые NuGet-пакеты не имеют нативной поддержки .NET 8 и используются в режиме совместимости:
+Some NuGet packages do not have native .NET 8 support and are used in compatibility mode:
 
-| Пакет | Предупреждение | Влияние |
-|-------|---------------|---------|
-| GemBox.Spreadsheet 39.3.30.1215 | NU1701: restored using .NET Framework | Может не работать полностью. Используется для экспорта результатов в таблицы |
-| iTextSharp-LGPL 4.1.6 | NU1701: restored using .NET Framework | Может не работать полностью. Используется для экспорта PDF |
+| Package | Warning | Impact |
+|---------|---------|--------|
+| GemBox.Spreadsheet 39.3.30.1215 | NU1701: restored using .NET Framework | May not work fully. Used for exporting results to spreadsheets |
+| iTextSharp-LGPL 4.1.6 | NU1701: restored using .NET Framework | May not work fully. Used for PDF export |
 
-### Архитектура процессора
+### Processor Architecture
 
-Docker-образ собирается для архитектуры хост-машины:
-- **x86_64** (Intel/AMD) — полностью поддерживается
-- **aarch64** (Apple Silicon, ARM) — полностью поддерживается
+The Docker image is built for the host machine's architecture:
+- **x86_64** (Intel/AMD) -- fully supported
+- **aarch64** (Apple Silicon, ARM) -- fully supported
 
-Нативная библиотека SkiaSharp автоматически выбирается под текущую архитектуру в `scripts/build.sh`.
+The SkiaSharp native library is automatically selected for the current architecture in `scripts/build.sh`.
 
-### Предупреждения при сборке
+### Build Warnings
 
-Сборка завершается с **362 предупреждениями** (0 ошибок). Основные категории:
+The build completes with **362 warnings** (0 errors). Main categories:
 
-| Категория | Количество | Описание |
-|-----------|-----------|----------|
-| CA1416 | ~100 | Platform-specific API (System.Drawing, FontConverter) — эти API вызываются только на Windows-пути кода |
-| BC42016/BC42020 | ~150 | VB.NET implicit conversions — стиль оригинального кода |
-| SYSLIB0011 | ~20 | BinaryFormatter obsolete — используется для совместимости со старыми файлами |
-| CS0618 | ~10 | SkiaSharp deprecated API — GRBackendRenderTargetDesc |
+| Category | Count | Description |
+|----------|-------|-------------|
+| CA1416 | ~100 | Platform-specific API (System.Drawing, FontConverter) -- these APIs are only called in Windows code paths |
+| BC42016/BC42020 | ~150 | VB.NET implicit conversions -- the original code's style |
+| SYSLIB0011 | ~20 | BinaryFormatter obsolete -- used for backward compatibility with old files |
+| CS0618 | ~10 | SkiaSharp deprecated API -- GRBackendRenderTargetDesc |
 | NU1701 | ~5 | .NET Framework package compatibility |
 
-Эти предупреждения **не влияют** на работоспособность для headless-использования.
+These warnings **do not affect** functionality for headless use.
 
-## Что делать, если...
+## What to Do If...
 
-### Нужен аппарат, для которого нет формы редактирования
+### You Need a Unit Operation That Has No Editing Form
 
-Все аппараты **работают**. Формы нужны только для визуального редактирования. Программно:
+All unit operations **work**. Forms are only needed for visual editing. Programmatically:
 
 ```python
-# Создать аппарат
+# Create a unit operation
 heater = fs.add_unit_operation("Heater", "HTR-001")
 
-# Установить свойства через коды
+# Set properties via codes
 heater.set_property("PROP_HT_0", 400.0)  # Outlet temperature
 heater.set_property("PROP_HT_1", 0.0)    # Pressure drop
 ```
 
-Коды свойств для каждого аппарата документированы на [DWSIM Wiki](https://dwsim.org/wiki/index.php?title=Object_Property_Codes).
+Property codes for each unit operation are documented on the [DWSIM Wiki](https://dwsim.org/wiki/index.php?title=Object_Property_Codes).
 
-### Нужен порядок расчёта отличный от автоматического
+### You Need a Calculation Order Different from the Automatic One
 
-Решатель DWSIM автоматически определяет порядок расчёта аппаратов. В headless-режиме `ChangeCalculationOrder()` возвращает текущий порядок без изменений (нет UI-диалога для ручного изменения). Обычно автоматический порядок работает корректно.
+The DWSIM solver automatically determines the calculation order of unit operations. In headless mode, `ChangeCalculationOrder()` returns the current order unchanged (there is no UI dialog for manual reordering). Typically, the automatic order works correctly.
 
-### Ошибка загрузки libSkiaSharp.so
+### libSkiaSharp.so Loading Error
 
-Если при вызове `CreateFlowsheet()` возникает `DllNotFoundException: libSkiaSharp`:
-1. Проверьте, что нативная библиотека скопирована: `ls /app/dwsim/libSkiaSharp.so`
-2. Проверьте архитектуру: `file /app/dwsim/libSkiaSharp.so` должна совпадать с `uname -m`
-3. Проверьте зависимости: `apt-get install libfontconfig1 fonts-dejavu-core`
+If calling `CreateFlowsheet()` raises `DllNotFoundException: libSkiaSharp`:
+1. Check that the native library is copied: `ls /app/dwsim/libSkiaSharp.so`
+2. Check the architecture: `file /app/dwsim/libSkiaSharp.so` should match `uname -m`
+3. Check dependencies: `apt-get install libfontconfig1 fonts-dejavu-core`
 
-### Нужна новая версия DWSIM
+### You Need a Newer Version of DWSIM
 
-Патчи разработаны для текущей версии DWSIM (ветка `windows`). При обновлении DWSIM патчи могут потребовать корректировки, если:
-- Добавлены новые файлы с WinForms
-- Изменились сигнатуры обёрнутых методов
-- Добавлены новые зависимости
+The fork's `headless` branch is based on a specific upstream commit. When updating to a newer DWSIM version, rebase the `headless` branch onto the new upstream commit:
 
-Рекомендуется после обновления запускать полную сборку и проверять smoke-тест.
+```bash
+git fetch upstream
+git rebase upstream/windows
+```
+
+The rebase may require conflict resolution if:
+- New files with WinForms code were added
+- Signatures of wrapped methods were changed
+- New dependencies were added
+
+It is recommended to run a full build and verify the smoke test after updating.

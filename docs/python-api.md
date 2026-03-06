@@ -1,213 +1,213 @@
 # Python API
 
-## Обзор
+## Overview
 
-Python-клиент (`dwsim_client.py`) — обёртка над .NET классом `DWSIM.Automation.Automation3` через [pythonnet](https://pythonnet.github.io/). Предоставляет Pythonic API для создания, расчёта и анализа технологических схем.
+The Python client (`dwsim_client.py`) is a wrapper around the .NET class `DWSIM.Automation.Automation3` via [pythonnet](https://pythonnet.github.io/). It provides a Pythonic API for creating, solving, and analyzing flowsheets.
 
 ## DWSIMClient
 
-Главная точка входа.
+The main entry point.
 
 ```python
 from dwsim_client import DWSIMClient
 
-# Создание (указать путь к DLL-файлам DWSIM)
+# Create (specify path to DWSIM DLL files)
 client = DWSIMClient("/app/dwsim")
 
-# Или через context manager (автоматически освобождает ресурсы)
+# Or via context manager (automatically releases resources)
 with DWSIMClient("/app/dwsim") as client:
     ...
 ```
 
-### Свойства
+### Properties
 
-| Свойство | Тип | Описание |
-|----------|-----|----------|
-| `version` | `str` | Версия DWSIM (например, "DWSIM version 9.0.5.0 (...)") |
-| `available_compounds` | `list[str]` | Список всех доступных веществ (1480 шт.) |
-| `available_property_packages` | `list[str]` | Список пакетов свойств (29 шт.) |
+| Property | Type | Description |
+|----------|------|-------------|
+| `version` | `str` | DWSIM version (e.g., "DWSIM version 9.0.5.0 (...)") |
+| `available_compounds` | `list[str]` | List of all available compounds (1480 total) |
+| `available_property_packages` | `list[str]` | List of property packages (29 total) |
 
-### Методы
+### Methods
 
-| Метод | Возвращает | Описание |
-|-------|-----------|----------|
-| `create_flowsheet()` | `FlowsheetWrapper` | Создать пустую технологическую схему |
-| `load_flowsheet(filepath)` | `FlowsheetWrapper` | Загрузить схему из файла `.dwxml`/`.dwxmz` |
-| `release()` | — | Освободить ресурсы DWSIM |
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `create_flowsheet()` | `FlowsheetWrapper` | Create an empty flowsheet |
+| `load_flowsheet(filepath)` | `FlowsheetWrapper` | Load a flowsheet from a `.dwxml`/`.dwxmz` file |
+| `release()` | -- | Release DWSIM resources |
 
 ## FlowsheetWrapper
 
-Обёртка над технологической схемой DWSIM.
+Wrapper around a DWSIM flowsheet.
 
-### Настройка схемы
+### Setting Up the Flowsheet
 
 ```python
 fs = client.create_flowsheet()
 
-# Добавить вещества (имена должны точно совпадать с available_compounds)
+# Add compounds (names must exactly match available_compounds)
 fs.add_compound("Water")
 fs.add_compound("Ethanol")
 fs.add_compound("Methanol")
 
-# Добавить пакет свойств
+# Add a property package
 fs.add_property_package("Peng-Robinson (PR)")
 ```
 
-### Доступные пакеты свойств
+### Available Property Packages
 
-| Пакет | Описание |
-|-------|----------|
-| `"Peng-Robinson (PR)"` | Кубическое уравнение состояния Пенга-Робинсона |
-| `"Soave-Redlich-Kwong (SRK)"` | Кубическое уравнение состояния SRK |
-| `"NRTL"` | Модель коэффициентов активности NRTL |
-| `"UNIQUAC"` | Модель коэффициентов активности UNIQUAC |
-| `"UNIFAC"` | Групповая модель UNIFAC |
-| `"Modified UNIFAC (Dortmund)"` | Модифицированная UNIFAC |
-| `"CoolProp"` | Высокоточные свойства (NIST) |
-| `"Steam Tables (IAPWS-IF97)"` | Таблицы водяного пара |
-| `"Raoult's Law"` | Закон Рауля (идеальные растворы) |
-| `"GERG-2008"` | Уравнение состояния для газов |
-| `"PC-SAFT"` | Статистически-ассоциативное уравнение |
-| `"Peng-Robinson 1978 (PR78)"` | Модификация PR 1978 |
-| `"Lee-Kesler-Plocker"` | Уравнение Ли-Кеслера-Плоккера |
-| `"Black Oil"` | Модель чёрной нефти |
-| ... | Полный список: `client.available_property_packages` |
+| Package | Description |
+|---------|-------------|
+| `"Peng-Robinson (PR)"` | Peng-Robinson cubic equation of state |
+| `"Soave-Redlich-Kwong (SRK)"` | SRK cubic equation of state |
+| `"NRTL"` | NRTL activity coefficient model |
+| `"UNIQUAC"` | UNIQUAC activity coefficient model |
+| `"UNIFAC"` | UNIFAC group contribution model |
+| `"Modified UNIFAC (Dortmund)"` | Modified UNIFAC |
+| `"CoolProp"` | High-accuracy properties (NIST) |
+| `"Steam Tables (IAPWS-IF97)"` | Steam tables |
+| `"Raoult's Law"` | Raoult's Law (ideal solutions) |
+| `"GERG-2008"` | Equation of state for gases |
+| `"PC-SAFT"` | Statistical associating equation |
+| `"Peng-Robinson 1978 (PR78)"` | PR 1978 modification |
+| `"Lee-Kesler-Plocker"` | Lee-Kesler-Plocker equation |
+| `"Black Oil"` | Black oil model |
+| ... | Full list: `client.available_property_packages` |
 
-### Добавление объектов
+### Adding Objects
 
 ```python
-# Материальный поток (с настройкой)
+# Material stream (with configuration)
 feed = fs.add_material_stream(
     "FEED",
     temperature=350.0,       # K
     pressure=101325.0,       # Pa
     mass_flow=1.0,           # kg/s
-    composition={"Water": 0.5, "Ethanol": 0.5}  # мольные доли
+    composition={"Water": 0.5, "Ethanol": 0.5}  # mole fractions
 )
 
-# Материальный поток (без настройки — настроить позже)
+# Material stream (without configuration -- configure later)
 product = fs.add_material_stream("PRODUCT")
 
-# Энергетический поток
+# Energy stream
 energy = fs.add_energy_stream("Q-001")
 
-# Аппарат
+# Unit operation
 mixer = fs.add_unit_operation("Mixer", "MIX-001")
 heater = fs.add_unit_operation("Heater", "HTR-001")
 flash = fs.add_unit_operation("Vessel", "FLASH")
 valve = fs.add_unit_operation("Valve", "VLV-001")
 
-# Произвольный объект по имени типа
+# Arbitrary object by type name
 obj = fs.add_object("DistillationColumn", "COL-001")
 ```
 
-### Доступные типы аппаратов
+### Available Unit Operation Types
 
-| Тип | Описание |
-|-----|----------|
-| **Потоки** | |
-| `MaterialStream` | Материальный поток |
-| `EnergyStream` | Энергетический поток |
-| **Смесители/Разделители** | |
-| `Mixer` (или `NodeIn`) | Смеситель |
-| `Splitter` (или `NodeOut`) | Разделитель |
-| **Давление** | |
-| `Pump` | Насос |
-| `Compressor` | Компрессор |
-| `Expander` | Детандер (турбина) |
-| `Valve` | Клапан (дроссель) |
-| **Теплообмен** | |
-| `Heater` | Нагреватель |
-| `Cooler` | Холодильник |
-| `HeatExchanger` | Теплообменник |
-| **Сепарация** | |
-| `Vessel` | Флеш-сепаратор |
-| `ComponentSeparator` | Компонентный разделитель |
-| `Filter` | Фильтр |
-| **Колонны** | |
-| `ShortcutColumn` | Упрощённая ректификация (Fenske-Underwood) |
-| `DistillationColumn` | Полная ректификационная колонна |
-| `AbsorptionColumn` | Абсорбер |
-| **Реакторы** | |
-| `RCT_Conversion` | Реактор конверсии |
-| `RCT_Equilibrium` | Равновесный реактор |
-| `RCT_Gibbs` | Реактор Гиббса |
-| `RCT_CSTR` | Реактор идеального смешения |
-| `RCT_PFR` | Реактор идеального вытеснения |
-| **Трубопровод** | |
-| `Pipe` | Трубопровод |
-| `Tank` | Резервуар |
-| **Логические** | |
-| `OT_Adjust` | Подбор (Adjust) |
-| `OT_Spec` | Спецификация |
-| `OT_Recycle` | Рецикл |
+| Type | Description |
+|------|-------------|
+| **Streams** | |
+| `MaterialStream` | Material stream |
+| `EnergyStream` | Energy stream |
+| **Mixers/Splitters** | |
+| `Mixer` (or `NodeIn`) | Mixer |
+| `Splitter` (or `NodeOut`) | Splitter |
+| **Pressure** | |
+| `Pump` | Pump |
+| `Compressor` | Compressor |
+| `Expander` | Expander (turbine) |
+| `Valve` | Valve (throttle) |
+| **Heat Exchange** | |
+| `Heater` | Heater |
+| `Cooler` | Cooler |
+| `HeatExchanger` | Heat exchanger |
+| **Separation** | |
+| `Vessel` | Flash separator |
+| `ComponentSeparator` | Component separator |
+| `Filter` | Filter |
+| **Columns** | |
+| `ShortcutColumn` | Shortcut distillation (Fenske-Underwood) |
+| `DistillationColumn` | Rigorous distillation column |
+| `AbsorptionColumn` | Absorber |
+| **Reactors** | |
+| `RCT_Conversion` | Conversion reactor |
+| `RCT_Equilibrium` | Equilibrium reactor |
+| `RCT_Gibbs` | Gibbs reactor |
+| `RCT_CSTR` | Continuous stirred-tank reactor |
+| `RCT_PFR` | Plug flow reactor |
+| **Piping** | |
+| `Pipe` | Pipe segment |
+| `Tank` | Tank |
+| **Logical** | |
+| `OT_Adjust` | Adjust |
+| `OT_Spec` | Specification |
+| `OT_Recycle` | Recycle |
 
-### Соединение объектов
+### Connecting Objects
 
 ```python
 # connect(source, destination, from_port, to_port)
-fs.connect(feed, mixer, 0, 0)       # feed → mixer inlet 0
-fs.connect(mixer, product, 0, 0)    # mixer → product
+fs.connect(feed, mixer, 0, 0)       # feed -> mixer inlet 0
+fs.connect(mixer, product, 0, 0)    # mixer -> product
 
-# Для флеш-сепаратора: порт 0 = пар, порт 1 = жидкость
+# For flash separator: port 0 = vapor, port 1 = liquid
 fs.connect(feed, flash, 0, 0)
 fs.connect(flash, vapor, 0, 0)      # vapor out
 fs.connect(flash, liquid, 1, 0)     # liquid out
 
-# Разъединить
+# Disconnect
 fs.disconnect(feed, mixer)
 ```
 
-### Расчёт
+### Solving
 
 ```python
-# Вариант 1: Простой расчёт
+# Option 1: Simple solve
 errors = fs.solve()
 if errors:
     for e in errors:
-        print(f"Ошибка: {e}")
+        print(f"Error: {e}")
 
-# Вариант 2: С таймаутом (секунды)
+# Option 2: With timeout (seconds)
 errors = fs.solve(timeout_seconds=60)
 
-# Вариант 3: Сохранить после расчёта
+# Option 3: Save after solving
 fs.save("/output/result.dwxmz", compressed=True)
 ```
 
-### Навигация по объектам
+### Navigating Objects
 
 ```python
-# Список всех объектов
+# List all objects
 print(fs.list_objects())  # ['FEED', 'MIX-001', 'PRODUCT']
 
-# Получить объект по тегу
+# Get an object by tag
 obj = fs.get_object("FEED")
 ```
 
 ## MaterialStreamWrapper
 
-Обёртка над материальным потоком с удобными свойствами.
+Wrapper around a DWSIM material stream with convenient properties.
 
-### Чтение результатов
+### Reading Results
 
 ```python
 stream = fs.get_object("PRODUCT")
 
-# Основные свойства (только для чтения после расчёта)
+# Main properties (read-only after solving)
 print(stream.temperature)  # K
 print(stream.pressure)     # Pa
 print(stream.mass_flow)    # kg/s
 print(stream.molar_flow)   # mol/s
 
-# Состав
+# Composition
 comp = stream.get_composition()
 # {'Water': 0.38, 'Ethanol': 0.62}
 
-# Текстовый отчёт
+# Text report
 print(stream.get_report())
 ```
 
-### Установка параметров
+### Setting Parameters
 
 ```python
 stream.set_temperature(350.0)    # K
@@ -215,7 +215,7 @@ stream.set_pressure(101325.0)    # Pa
 stream.set_mass_flow(1.0)        # kg/s
 stream.set_molar_flow(30.0)      # mol/s
 
-# Мольный состав
+# Molar composition
 stream.set_composition({
     "Water": 0.5,
     "Ethanol": 0.3,
@@ -223,7 +223,7 @@ stream.set_composition({
 })
 ```
 
-### Красивый вывод
+### String Representation
 
 ```python
 print(feed)
@@ -232,44 +232,44 @@ print(feed)
 
 ## SimulationObjectWrapper
 
-Базовая обёртка для любого объекта (аппарат, поток).
+Base wrapper for any object (unit operation, stream).
 
 ```python
 obj = fs.get_object("MIX-001")
 
-# Тег объекта
+# Object tag
 print(obj.tag)  # "MIX-001"
 
-# Произвольное свойство по коду
+# Arbitrary property by code
 value = obj.get_property("PROP_MX_0")
 
-# Установить свойство
+# Set property
 obj.set_property("PROP_HT_0", 400.0)
 
-# Текстовый отчёт
+# Text report
 print(obj.get_report())
 
-# Доступ к .NET объекту напрямую
+# Access the .NET object directly
 net_obj = obj.native
 ```
 
-## Коды свойств потоков
+## Stream Property Codes
 
-Основные коды для материальных потоков (`PROP_MS_*`):
+Main codes for material streams (`PROP_MS_*`):
 
-| Код | Свойство | Единицы |
-|-----|----------|---------|
-| `PROP_MS_0` | Температура | K |
-| `PROP_MS_1` | Давление | Pa |
-| `PROP_MS_2` | Массовый расход | kg/s |
-| `PROP_MS_3` | Мольный расход | mol/s |
-| `PROP_MS_4` | Объёмный расход | m3/s |
-| `PROP_MS_6` | Удельная энтальпия | kJ/kg |
-| `PROP_MS_7` | Удельная энтропия | kJ/(kg*K) |
+| Code | Property | Units |
+|------|----------|-------|
+| `PROP_MS_0` | Temperature | K |
+| `PROP_MS_1` | Pressure | Pa |
+| `PROP_MS_2` | Mass flow rate | kg/s |
+| `PROP_MS_3` | Molar flow rate | mol/s |
+| `PROP_MS_4` | Volumetric flow rate | m3/s |
+| `PROP_MS_6` | Specific enthalpy | kJ/kg |
+| `PROP_MS_7` | Specific entropy | kJ/(kg*K) |
 
-Полный список кодов: [DWSIM Wiki — Object Property Codes](https://dwsim.org/wiki/index.php?title=Object_Property_Codes)
+Full list of property codes: [DWSIM Wiki -- Object Property Codes](https://dwsim.org/wiki/index.php?title=Object_Property_Codes)
 
-## Полный пример: смешение и нагрев
+## Complete Example: Mixing and Heating
 
 ```python
 from dwsim_client import DWSIMClient
@@ -277,12 +277,12 @@ from dwsim_client import DWSIMClient
 with DWSIMClient("/app/dwsim") as client:
     fs = client.create_flowsheet()
 
-    # Вещества и термодинамика
+    # Compounds and thermodynamics
     fs.add_compound("Water")
     fs.add_compound("Ethanol")
     fs.add_property_package("NRTL")
 
-    # Два входных потока
+    # Two inlet streams
     feed1 = fs.add_material_stream(
         "FEED-1", temperature=300.0, pressure=200000.0,
         mass_flow=0.5, composition={"Water": 0.8, "Ethanol": 0.2}
@@ -292,16 +292,16 @@ with DWSIMClient("/app/dwsim") as client:
         mass_flow=0.3, composition={"Water": 0.3, "Ethanol": 0.7}
     )
 
-    # Смеситель
+    # Mixer
     mixer = fs.add_unit_operation("Mixer", "MIX-001")
     mixed = fs.add_material_stream("MIXED")
 
-    # Нагреватель
+    # Heater
     heater = fs.add_unit_operation("Heater", "HTR-001")
     hot = fs.add_material_stream("HOT")
     energy = fs.add_energy_stream("Q-HTR")
 
-    # Соединения
+    # Connections
     fs.connect(feed1, mixer, 0, 0)
     fs.connect(feed2, mixer, 0, 1)
     fs.connect(mixer, mixed, 0, 0)
@@ -309,55 +309,55 @@ with DWSIMClient("/app/dwsim") as client:
     fs.connect(heater, hot, 0, 0)
     fs.connect(energy, heater, 0, 0)
 
-    # Установить температуру нагрева
+    # Set heating temperature
     heater.set_property("PROP_HT_0", 380.0)  # Target T = 380K
     heater.set_property("PROP_HT_1", 0.0)    # Delta P = 0
 
-    # Расчёт
+    # Solve
     errors = fs.solve()
     if errors:
-        print("Ошибки:", errors)
+        print("Errors:", errors)
     else:
-        print(f"Смешанный поток: {mixed.temperature:.1f} K, {mixed.mass_flow:.4f} kg/s")
-        print(f"Нагретый поток:  {hot.temperature:.1f} K, {hot.mass_flow:.4f} kg/s")
-        print(f"Состав: {hot.get_composition()}")
+        print(f"Mixed stream: {mixed.temperature:.1f} K, {mixed.mass_flow:.4f} kg/s")
+        print(f"Heated stream: {hot.temperature:.1f} K, {hot.mass_flow:.4f} kg/s")
+        print(f"Composition: {hot.get_composition()}")
 ```
 
-## Работа с загруженными файлами
+## Working with Loaded Files
 
 ```python
 with DWSIMClient("/app/dwsim") as client:
-    # Загрузить существующую схему
+    # Load an existing flowsheet
     fs = client.load_flowsheet("/path/to/simulation.dwxmz")
 
-    # Изменить параметры
+    # Modify parameters
     feed = fs.get_object("S-01")
-    feed.set_property("PROP_MS_0", 400.0)  # Изменить температуру
+    feed.set_property("PROP_MS_0", 400.0)  # Change temperature
 
-    # Пересчитать
+    # Recalculate
     errors = fs.solve()
 
-    # Прочитать результаты
+    # Read results
     product = fs.get_object("S-05")
     print(product.get_report())
 
-    # Сохранить
+    # Save
     fs.save("/output/modified.dwxmz")
 ```
 
-## Доступ к .NET объектам
+## Accessing .NET Objects
 
-Для продвинутого использования можно работать с .NET объектами напрямую через pythonnet:
+For advanced usage, you can work with .NET objects directly via pythonnet:
 
 ```python
-# Получить .NET flowsheet
+# Get the .NET flowsheet
 net_fs = fs.native
 
-# Вызвать любой .NET метод
+# Call any .NET method
 for obj in net_fs.SimulationObjects.Values:
     print(f"{obj.GraphicObject.Tag}: {obj.GetType().Name}")
 
-# Работа с перечислениями
+# Working with enumerations
 from DWSIM.Interfaces.Enums.GraphicObjects import ObjectType
 obj = net_fs.AddObject(ObjectType.Valve, 100, 100, "VLV-001")
 ```
