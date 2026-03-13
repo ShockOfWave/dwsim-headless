@@ -79,6 +79,52 @@ Vapor:  0.8909 kg/s, 350.0 K
 Liquid: 0.1091 kg/s, 350.0 K
 ```
 
+## REST API
+
+A standalone HTTP REST API for thermodynamic property calculations, flash equilibrium, and reactor simulations.
+
+### Quick Start
+
+```bash
+# Build the API image (from repo root)
+docker build -f api/Dockerfile -t dwsim-api .
+
+# Run
+docker run -p 8003:8003 dwsim-api
+
+# Check health
+curl http://localhost:8003/health
+
+# List capabilities
+curl http://localhost:8003/capabilities
+```
+
+### Available Endpoints
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/health` | GET | Health check |
+| `/capabilities` | GET | Engine capabilities and metadata |
+| `/compounds` | GET | List all available compounds |
+| `/compounds/search?q=` | GET | Search compounds by name |
+| `/property-packages` | GET | List thermodynamic models |
+| `/properties/thermodynamic` | POST | Calculate thermodynamic properties |
+| `/properties/transport` | POST | Calculate transport properties |
+| `/properties/surface` | POST | Calculate surface properties |
+| `/flash/{type}` | POST | Flash equilibrium (pt, ph, ps, tvf, pvf) |
+| `/reactor/simulate` | POST | Reactor simulation |
+| `/verify-compounds` | POST | Verify compound availability |
+
+See [docs/api-contract.md](docs/api-contract.md) for the full API specification with request/response schemas.
+
+### Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `ASPNETCORE_URLS` | `http://+:8003` | Listening address |
+| `DWSIM_DLL_PATH` | `/app/dwsim` | Path to DWSIM DLLs |
+| `DWSIM_POOL_SIZE` | `4` | Number of engine instances in the pool |
+
 ## Requirements
 
 - **Docker** (Docker Desktop or Docker Engine)
@@ -90,9 +136,17 @@ Liquid: 0.1091 kg/s, 350.0 K
 
 ```
 ├── Dockerfile                  # Multi-stage build (build -> runtime)
-├── docker-compose.yml          # Docker Compose services
 ├── LICENSE                     # GPL-3.0
 ├── dwsim/                      # Git submodule: DWSIM sources (ShockOfWave/dwsim, branch headless)
+├── api/
+│   ├── Dockerfile              # API Docker build (multi-stage)
+│   ├── src/                    # ASP.NET Core 8 REST API
+│   │   ├── Program.cs          # Entry point
+│   │   ├── DwsimService.csproj # Project file
+│   │   ├── Services/           # Engine pool and wrappers
+│   │   ├── Endpoints/          # HTTP endpoint definitions
+│   │   └── Models/             # Request/Response DTOs
+│   └── tests/                  # xUnit integration tests
 ├── scripts/
 │   ├── build.sh                # Main build script
 │   ├── install.sh              # Bare Linux installation script
@@ -104,6 +158,7 @@ Liquid: 0.1091 kg/s, 350.0 K
 │   └── requirements.txt        # pythonnet>=3.0.3
 ├── output/                     # Build artifacts (DLL files)
 └── docs/
+    ├── api-contract.md         # External Engine API contract specification
     ├── architecture.md         # Architecture and description of changes
     ├── approach.md             # Approach and alternatives
     ├── limitations.md          # Limitations and known issues
@@ -152,20 +207,11 @@ You can pass a custom install directory as the first argument: `./scripts/instal
 
 ## Documentation
 
+- [REST API Contract](docs/api-contract.md) -- HTTP API specification for external engine integration
 - [Architecture and Changes](docs/architecture.md) -- what was changed and why it works
 - [Approach and Alternatives](docs/approach.md) -- why this approach was chosen
 - [Limitations](docs/limitations.md) -- what does not work and why
 - [Python API](docs/python-api.md) -- Python client reference
-
-## Docker Compose
-
-```bash
-# Build only (for debugging)
-docker compose run --rm dwsim-build
-
-# Runtime with Python
-docker compose run --rm dwsim-runtime python3
-```
 
 ## Updating DWSIM
 
